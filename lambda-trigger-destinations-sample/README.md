@@ -1,7 +1,10 @@
 # Lambda Triggers and Destinations Sample (Java)
 
 # Intro
-This sample app demonstrates the use of the Lambda Triggers, Destinations and Dead Letter Queue features. 
+This sample app demonstrates the following Lambda best practices:
+1. Use SAM / CloudFormation to create and manage your Lambda functions.
+2. Minimize the amount of code you write. In this sample we accomplish this through the
+ Lambda Triggers, Destinations and Dead Letter Queue features. 
 
 ![Architecture Diagram](images/lambda-trigger-destinations-sample.png)
 
