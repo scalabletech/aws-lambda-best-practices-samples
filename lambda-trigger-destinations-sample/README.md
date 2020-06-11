@@ -12,9 +12,10 @@ The project source includes function code and supporting resources:
 
 - `src/main` - Java function code
 - `src/test` - unit tests
-- `template.yml` - AWS CloudFormation template
+- `template.yml` - AWS CloudFormation / SAM template
 - `pom.xml` - Maven build file
-- `create-bucket.sh`, `build-deploy-stack.sh`, `upload-image.sh`, `upload-zip.sh`, `delete-stack.sh` - scripts to manage the app using the AWS CLI.
+- `create-bucket.sh`, `build-deploy-stack.sh`, `upload-image.sh`, `upload-zip.sh`, `delete-stack.sh` - 
+    scripts to manage the app using the AWS CLI.
 
 # Requirements
 - [Java 8/11 SE JRE](https://www.oracle.com/java/technologies/javase-downloads.html)
@@ -43,20 +44,26 @@ The project source includes function code and supporting resources:
     
 
 # Test
-1. Upload an image file to the application S3 bucket and trigger the Lambda function. This will result in the Lambda function returning an successful response. The success state will cause a message to be sent to the Lambda destination SNS Topic setup to receive notifications for successful transactions.
+1. Upload an image file to the application S3 bucket and trigger the Lambda function. This will 
+    result in the Lambda function returning a successful response. The success state will cause a 
+    message to be sent to the Lambda destination SNS Topic setup to receive notifications for 
+    successful transactions.
     ~~~~
     # Run the following command in your terminal
     $ ./upload-image.sh
     ~~~~
 
-2. Upload a zip file to the application S3 bucket and trigger the Lambda function. This will result in the Lambda function returning an error. The error state will cause a message to be sent to the DLQ which is an SQS queue setup to receive messages for failed transactions.
+2. Upload a zip file to the application S3 bucket and trigger the Lambda function. This will result 
+    in the Lambda function returning an error. The error state will cause the Lambda function call 
+    to be retried. After the configured number of retries are exhausted the message will be sent to 
+    the dead letter queue which is an SQS queue setup to receive failed messages.
     ~~~~
     # Run the following command in your terminal
     $ ./upload-zip.sh
     ~~~~
 
 # Cleanup
-1. Delete the CloudFormation stack when you're done working with it.
+1. To avoid future charges, delete the CloudFormation stack when you're done working with it.
     ~~~~    
     # Run the following command in your terminal
     $ ./delete-stack.sh
