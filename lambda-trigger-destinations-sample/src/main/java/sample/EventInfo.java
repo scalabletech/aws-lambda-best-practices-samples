@@ -2,9 +2,9 @@ package sample;
 
 public class EventInfo {
 
-  String eventName;
-  String bucketName;
-  String objectKey;
+  private String eventName;
+  private String bucketName;
+  private String objectKey;
 
   public EventInfo(String eventName, String bucket, String objectKey) {
     this.eventName = eventName;
