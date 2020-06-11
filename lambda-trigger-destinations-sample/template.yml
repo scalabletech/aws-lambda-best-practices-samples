@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Lambda application that handles S3 object events. No processing is done as downstream services configured through Lambda destinations will handle the processing.
+Resources:
+  InputBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+
+  PublishedEventsSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: 'PublishedEventsSnsTopic'
+
+  SnsSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: test@testdomain.com
+      Protocol: email
+      TopicArn: !Ref PublishedEventsSnsTopic
+
+  Dlq:
+    Type: AWS::SQS::Queue
+
+  FileHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: target/lambda-trigger-destinations-sample-1.0-SNAPSHOT.jar
+      Handler: sample.Handler::handleRequest
+      Runtime: java11
+      Description: Handles events for objects uploaded to S3
+      MemorySize: 512
+      Timeout: 15
+      # It's a best practice to grant only the permissions needed for the Lambda
+      # to do its intended work. So, instead of the below policies which are more
+      # permissive than necessary it would be better to use. The other sample
+      # in this repo demonstrates the use of Policy Templates.
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AWSLambdaReadOnlyAccess
+        - AWSXrayWriteOnlyAccess
+        - AWSLambdaVPCAccessExecutionRole
+        - AmazonSNSFullAccess
+        - AmazonS3FullAccess
+      Tracing: Active
+      Events:
+        S3Notification:
+          Type: S3
+          Properties:
+            Bucket: !Ref InputBucket
+            Events: s3:ObjectCreated:*
+      DeadLetterQueue:
+        Type: 'SQS'
+        TargetArn: !GetAtt Dlq.Arn
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 300
+        MaximumRetryAttempts: 1
+        DestinationConfig:
+          OnSuccess:
+            Type: SNS
+            Destination: !Ref PublishedEventsSnsTopic

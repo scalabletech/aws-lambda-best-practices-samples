@@ -1,0 +1,10 @@
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "startTemp": 75,
+  "lowTemp": 72,
+  "highTemp": 92,
+  "uom": "f"
+}

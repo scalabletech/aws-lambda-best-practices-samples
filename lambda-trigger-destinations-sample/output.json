@@ -1,0 +1,38 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-east-1",
+      "eventTime": "2020-06-10T02:59:01.867Z",
+      "eventName": "ObjectCreated:Put",
+      "userIdentity": {
+        "principalId": "AWS:AIDAIAX5GITRG37TTXZGS"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "76.26.48.247"
+      },
+      "responseElements": {
+        "x-amz-request-id": "5F431EEFDA13709A",
+        "x-amz-id-2": "sL1rHsMd3DmfrkwXJfpsqGo6mFbYWBuTERozdlgQcrv8jb8iydLR9za5Ex9+y+kjE6gnZzhNk3xgDJBaOkFc/Nt0h3bLb6bb"
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "c8ddcac2-fdeb-409a-84d8-1758318b2232",
+        "bucket": {
+          "name": "lambda-trigger-destinations-sample-inputbucket-82e7wpexxkwn",
+          "ownerIdentity": {
+            "principalId": "A16O4KABTKADAI"
+          },
+          "arn": "arn:aws:s3:::lambda-trigger-destinations-sample-inputbucket-82e7wpexxkwn"
+        },
+        "object": {
+          "key": "aws-lambda-developer-guide-master.zip",
+          "size": 4278037,
+          "eTag": "5792f27655d43e06045db6691b89c19e",
+          "sequencer": "005EE04C7B1F547449"
+        }
+      }
+    }
+  ]
+}
