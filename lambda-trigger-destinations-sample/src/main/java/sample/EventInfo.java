@@ -2,9 +2,9 @@ package sample;
 
 public class EventInfo {
 
-  private String eventName;
-  private String bucketName;
-  private String objectKey;
+  private final String eventName;
+  private final String bucketName;
+  private final String objectKey;
 
   public EventInfo(String eventName, String bucket, String objectKey) {
     this.eventName = eventName;
@@ -16,23 +16,11 @@ public class EventInfo {
     return eventName;
   }
 
-  public void setEventName(String eventName) {
-    this.eventName = eventName;
-  }
-
   public String getBucketName() {
     return bucketName;
   }
 
-  public void setBucketName(String bucketName) {
-    this.bucketName = bucketName;
-  }
-
   public String getObjectKey() {
     return objectKey;
-  }
-
-  public void setObjectKey(String objectKey) {
-    this.objectKey = objectKey;
   }
 }
