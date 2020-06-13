@@ -2,6 +2,13 @@ package sample;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
 import com.amazonaws.services.lambda.runtime.events.S3Event;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.RequestParametersEntity;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.ResponseElementsEntity;
@@ -10,11 +17,6 @@ import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotificatio
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3EventNotificationRecord;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.S3ObjectEntity;
 import com.amazonaws.services.lambda.runtime.events.models.s3.S3EventNotification.UserIdentityEntity;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 public class HandlerTest {
 
