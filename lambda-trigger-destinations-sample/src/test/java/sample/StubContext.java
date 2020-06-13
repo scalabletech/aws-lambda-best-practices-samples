@@ -8,28 +8,27 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 public class StubContext implements Context {
 
   public String getAwsRequestId() {
-    return new String("skjh23e2-uwsd-8dqy-9165-695162te2676");
+    return "skjh23e2-uwsd-8dqy-9165-695162te2676";
   }
 
   public String getLogGroupName() {
-    return new String("/aws/lambda/lambda-trigger-destinations-sample");
+    return "/aws/lambda/lambda-trigger-destinations-sample";
   }
 
   public String getLogStreamName() {
-    return new String("2020/06/11/[$LATEST]625efyq614283giqne3962jkhkh21pwe");
+    return "2020/06/11/[$LATEST]625efyq614283giqne3962jkhkh21pwe";
   }
 
   public String getFunctionName() {
-    return new String("lambda-trigger-destinations-sample");
+    return "lambda-trigger-destinations-sample";
   }
 
   public String getFunctionVersion() {
-    return new String("$LATEST");
+    return "$LATEST";
   }
 
   public String getInvokedFunctionArn() {
-    return new String(
-        "arn:aws:lambda:us-east-1:23768265731:function:lambda-trigger-destinations-sample");
+    return "arn:aws:lambda:us-east-1:23768265731:function:lambda-trigger-destinations-sample";
   }
 
   public CognitoIdentity getIdentity() {

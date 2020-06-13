@@ -1,6 +1,6 @@
 package sample;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ public class HandlerTest {
 
   @Test
   public void testHandleRequest() throws IOException {
-    final String bucketName = new String(Files.readAllLines(Paths.get("bucket-name.tmp")).get(0));
+    final String bucketName = Files.readAllLines(Paths.get("bucket-name.tmp")).get(0);
     final String objectKey = "lambda-trigger-destinations-sample.png";
     final String eventName = "ObjectCreated:Put";
 
@@ -40,7 +40,7 @@ public class HandlerTest {
                 new UserIdentityEntity("IYW287TUYGW238"),
                 "arn:aws:s3:::" + bucketName),
             new S3ObjectEntity(objectKey,
-                44855l,
+                44855L,
                 "g2yjhbvdbnv2jhg23",
                 "",
                 "892UTP273917283"),
@@ -53,8 +53,8 @@ public class HandlerTest {
     Handler handler = new Handler();
     EventInfo eventInfo = (EventInfo) handler.handleRequest(s3Event, new StubContext());
 
-    assertTrue(eventInfo.getBucketName().equals(bucketName));
-    assertTrue(eventInfo.getObjectKey().equals(objectKey));
-    assertTrue(eventInfo.getEventName().equals(eventName));
+    assertEquals(bucketName, eventInfo.getBucketName());
+    assertEquals(objectKey, eventInfo.getObjectKey());
+    assertEquals(eventName, eventInfo.getEventName());
   }
 }
