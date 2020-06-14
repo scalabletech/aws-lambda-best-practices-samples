@@ -1,0 +1,198 @@
+[{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 2,
+  "temperature": 74,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 3,
+  "temperature": 73,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 4,
+  "temperature": 73,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 5,
+  "temperature": 72,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 6,
+  "temperature": 73,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 7,
+  "temperature": 74,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 8,
+  "temperature": 75,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 9,
+  "temperature": 77,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 10,
+  "temperature": 79,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 11,
+  "temperature": 81,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 12,
+  "temperature": 83,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 13,
+  "temperature": 83,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 14,
+  "temperature": 84,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 15,
+  "temperature": 85,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 16,
+  "temperature": 86,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 17,
+  "temperature": 86,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 18,
+  "temperature": 85,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 19,
+  "temperature": 83,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 20,
+  "temperature": 80,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 21,
+  "temperature": 78,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 22,
+  "temperature": 75,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 23,
+  "temperature": 75,
+  "uom": "f"
+}]

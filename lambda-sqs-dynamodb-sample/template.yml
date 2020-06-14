@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Lambda application that handles S3 object events. No processing is done as downstream services configured through Lambda destinations will handle the processing.
+Resources:
+
+  Dlq:
+    Type: AWS::SQS::Queue
+
+  SourceQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt Dlq.Arn
+        maxReceiveCount: 3
+
+  TemperatureDeviceReadingDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: "device_month"
+          AttributeType: "S"
+        -
+          AttributeName: "day_time"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "device_month"
+          KeyType: "HASH"
+        -
+          AttributeName: "day_time"
+          KeyType: "RANGE"
+      BillingMode: PAY_PER_REQUEST
+
+  FileHandlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: target/lambda-sqs-dynamodb-sample-1.0-SNAPSHOT.jar
+      Handler: sample.Handler::handleRequest
+      Runtime: java11
+      Description: Handles events for messages sent to an SQS queue, writing data to a DynamoDB table
+      MemorySize: 512
+      Timeout: 15
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TemperatureDeviceReadingDynamoDBTable
+      # It's a best practice to grant only the permissions needed for the Lambda to do its intended
+      # work. The Policy Templates below demonstrate how to easily grant specific permissions to
+      # access a specific resource.
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - SQSPollerPolicy:
+            QueueName: !GetAtt SourceQueue.QueueName
+        - DynamoDBWritePolicy:
+            TableName: !Ref TemperatureDeviceReadingDynamoDBTable
+      Tracing: Active
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SourceQueue.Arn
+            BatchSize: 10

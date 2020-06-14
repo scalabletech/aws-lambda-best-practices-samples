@@ -1,0 +1,18 @@
+[{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 8,
+  "temperature": 75,
+  "uom": "f"
+},
+{
+  "deviceId": "1234",
+  "year": 2020,
+  "month": 6,
+  "day": 1,
+  "hour": 9,
+  "temperature": 77,
+  "uom": "f"
+}]
