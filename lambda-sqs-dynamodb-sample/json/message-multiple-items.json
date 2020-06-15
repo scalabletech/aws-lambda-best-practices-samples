@@ -13,7 +13,7 @@
   "month": 6,
   "day": 1,
   "hour": 3,
-  "temperature": 73,
+  "temperature": -100,
   "uom": "f"
 },
 {
@@ -22,7 +22,7 @@
   "month": 6,
   "day": 1,
   "hour": 4,
-  "temperature": 73,
+  "temperature": 145,
   "uom": "f"
 },
 {

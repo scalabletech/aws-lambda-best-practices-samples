@@ -23,14 +23,22 @@ import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
+import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
+import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
 
 public class Handler implements RequestHandler<SQSEvent, Void> {
 
-  private static final Logger logger = LogManager.getLogger(Handler.class);
+  private static final Logger LOGGER = LogManager.getLogger(Handler.class);
   private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-  private static final Region region = Region.US_EAST_1;
-  private DynamoDbClient ddbClient = DynamoDbClient.builder().region(region).build();
+  private static final Region REGION = Region.US_EAST_1;
+
+  // For better cold start performance on a Lambda function the below variables can be declared and
+  // initialized statically. This will be demonstrated in another sample.
+  private DynamoDbClient ddbClient = DynamoDbClient.builder().region(REGION).build();
+  private SsmClient ssmClient = SsmClient.builder().build();
+  private ConfigurationSettings configSettings = null;
 
   private static final String TABLE_NAME =
       System.getenv("TABLE_NAME") == null ? "temperature_device_reading"
@@ -40,33 +48,64 @@ public class Handler implements RequestHandler<SQSEvent, Void> {
   private static final String TEMP_FIELD_NAME = "temp";
   private static final String UOM_FIELD_NAME = "uom";
 
+  private void loadConfigSettings() {
+    LOGGER.info("About to fetch configuration settings from AWS Parameter Store.");
+    GetParameterRequest request = GetParameterRequest.builder().withDecryption(false)
+        .name("/lambda-sqs-dynamodb-sample/config").build();
+    GetParameterResponse response = ssmClient.getParameter(request);
+
+    LOGGER.info("Parameter value: " + response.parameter().value());
+    configSettings = deserializeConfigurationSettings(response.parameter().value());
+  }
+
   public Handler() {
   }
 
   // This is for the purpose of unit testing. a better approach is to use dependency injection through
   // a lightweight framework like Dagger, Micronaut or Quarkus. We will demonstrate this in another
   // sample project.
-  public Handler(DynamoDbClient ddbClient) {
+  public Handler(DynamoDbClient ddbClient, SsmClient ssmClient) {
     this.ddbClient = ddbClient;
+    this.ssmClient = ssmClient;
   }
 
   @Override
   public Void handleRequest(SQSEvent event, Context context) {
+    if (configSettings == null) {
+      loadConfigSettings();
+    }
+    LOGGER.info("Configuration settings are minTemperature {}, maxTemperature {}.",
+        configSettings.getMinTemperature(), configSettings.getMaxTemperature());
+
     for (SQSMessage message : event.getRecords()) {
       String messageBody = message.getBody();
-      logger.info("Received SQS message: {}.", messageBody);
+      LOGGER.info("Received SQS message: {}.", messageBody);
 
       List<WriteRequest> writeRequests = new ArrayList<>();
-      List<EventInfo> eventInfoList = deserializeEventInfo(messageBody);
+      List<TemperatureDeviceReading> deviceReadings = deserializeEventInfo(messageBody);
 
-      for (EventInfo eventInfo : eventInfoList) {
-        HashMap<String, AttributeValue> itemValueMap = getItemValueMap(eventInfo);
+      for (TemperatureDeviceReading deviceReading : deviceReadings) {
+        if (deviceReading.getTemperature() < configSettings.getMinTemperature()
+            || deviceReading.getTemperature() > configSettings.getMaxTemperature()) {
+          LOGGER.warn("Temperature reading of {} is out of range ({} - {}) and will be discarded.",
+              deviceReading.getTemperature(), configSettings.getMinTemperature(),
+              configSettings.getMaxTemperature());
+          continue;
+        }
+
+        HashMap<String, AttributeValue> itemValueMap = getItemValueMap(deviceReading);
         WriteRequest writeRequest = WriteRequest.builder()
             .putRequest(PutRequest.builder().item(itemValueMap).build()).build();
         writeRequests.add(writeRequest);
-        logger.info("Added write request for deviceId {}, month {}, day {}, hour {}, temp {}.",
-            eventInfo.getDeviceId(), eventInfo.getMonth(), eventInfo.getDay(), eventInfo.getHour(),
-            eventInfo.getTemperature());
+        LOGGER.info("Added write request for deviceId {}, month {}, day {}, hour {}, temp {}.",
+            deviceReading.getDeviceId(), deviceReading.getMonth(), deviceReading
+                .getDay(), deviceReading.getHour(),
+            deviceReading.getTemperature());
+      }
+
+      if (writeRequests.isEmpty()) {
+        LOGGER.info("There are no temperature readings to persist.");
+        return null;
       }
 
       HashMap<String, List<WriteRequest>> batchRequests = new HashMap<>();
@@ -76,40 +115,48 @@ public class Handler implements RequestHandler<SQSEvent, Void> {
 
       try {
         ddbClient.batchWriteItem(batchWriteItemRequest);
-        logger.info("The table {} was successfully updated", TABLE_NAME);
+        LOGGER.info("The table {} was successfully updated", TABLE_NAME);
       } catch (ResourceNotFoundException e) {
         String errorMessage = String
             .format("[ResourceNotFoundException] The table %s can't be found.", TABLE_NAME);
-        logger.error(errorMessage);
+        LOGGER.error(errorMessage);
         throw new IllegalArgumentException(errorMessage);
       } catch (DynamoDbException e) {
         String errorMessage = String.format("[DynamoDBException] %s.", e.getMessage());
-        logger.error(errorMessage);
+        LOGGER.error(errorMessage);
         throw new RuntimeException(errorMessage);
       }
     }
     return null;
   }
 
-  private List<EventInfo> deserializeEventInfo(String json) {
-    return gson.fromJson(json, new TypeToken<ArrayList<EventInfo>>() {
+  private List<TemperatureDeviceReading> deserializeEventInfo(String json) {
+    return gson.fromJson(json, new TypeToken<ArrayList<TemperatureDeviceReading>>() {
     }.getType());
   }
 
-  private HashMap<String, AttributeValue> getItemValueMap(EventInfo eventInfo) {
+  private ConfigurationSettings deserializeConfigurationSettings(String json) {
+    return gson.fromJson(json, ConfigurationSettings.class);
+  }
+
+  private HashMap<String, AttributeValue> getItemValueMap(
+      TemperatureDeviceReading temperatureDeviceReading) {
     HashMap<String, AttributeValue> itemValueMap = new HashMap<>();
     // Add all content to the table
     itemValueMap
         .put(DEVICE_MONTH_FIELD_NAME, AttributeValue.builder()
-            .s(eventInfo.getDeviceId() + "|" + eventInfo.getYear() + "|" + String
-                .format("%02d", eventInfo.getMonth())).build());
+            .s(temperatureDeviceReading.getDeviceId() + "|" + temperatureDeviceReading.getYear()
+                + "|" + String
+                .format("%02d", temperatureDeviceReading.getMonth())).build());
     itemValueMap.put(DAY_TIME_FIELD_NAME,
         AttributeValue.builder()
-            .s(String.format("%02d", eventInfo.getDay()) + "|" + getTimeFromHour(
-                eventInfo.getHour())).build());
+            .s(String.format("%02d", temperatureDeviceReading.getDay()) + "|" + getTimeFromHour(
+                temperatureDeviceReading.getHour())).build());
     itemValueMap.put(TEMP_FIELD_NAME,
-        AttributeValue.builder().n(String.valueOf(eventInfo.getTemperature())).build());
-    itemValueMap.put(UOM_FIELD_NAME, AttributeValue.builder().s(eventInfo.getUom()).build());
+        AttributeValue.builder().n(String.valueOf(temperatureDeviceReading.getTemperature()))
+            .build());
+    itemValueMap
+        .put(UOM_FIELD_NAME, AttributeValue.builder().s(temperatureDeviceReading.getUom()).build());
     return itemValueMap;
   }
 

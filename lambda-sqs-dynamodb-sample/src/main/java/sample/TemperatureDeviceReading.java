@@ -1,6 +1,6 @@
 package sample;
 
-public class EventInfo {
+public class TemperatureDeviceReading {
 
   private String deviceId;
   private int year;

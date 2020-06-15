@@ -1,6 +1,19 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
-Description: An AWS Lambda application that handles S3 object events. No processing is done as downstream services configured through Lambda destinations will handle the processing.
+
+Description: An AWS Lambda application that handles SQS message events. Each message represents a
+  list of temperature readings from a device which will be persisted to a DynamoDB table.
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - test
+      - qa
+      - prod
+
 Resources:
 
   Dlq:
@@ -11,7 +24,7 @@ Resources:
     Properties:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt Dlq.Arn
-        maxReceiveCount: 3
+        maxReceiveCount: 2
 
   TemperatureDeviceReadingDynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -31,6 +44,14 @@ Resources:
           AttributeName: "day_time"
           KeyType: "RANGE"
       BillingMode: PAY_PER_REQUEST
+
+  AppConfigParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: '/lambda-sqs-dynamodb-sample/config'
+      Description: App configuration settings.
+      Type: String
+      Value: '{"minTemperature": -90, "maxTemperature": 135}'
 
   FileHandlerFunction:
     Type: AWS::Serverless::Function
@@ -53,6 +74,9 @@ Resources:
             QueueName: !GetAtt SourceQueue.QueueName
         - DynamoDBWritePolicy:
             TableName: !Ref TemperatureDeviceReadingDynamoDBTable
+        # !Ref for SSMParameterReadPolicy has an issue so use literal parameter name
+        - SSMParameterReadPolicy:
+            ParameterName: 'lambda-sqs-dynamodb-sample/config'
       Tracing: Active
       Events:
         MySQSEvent:
