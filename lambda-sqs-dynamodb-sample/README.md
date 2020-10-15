@@ -10,11 +10,6 @@ This sample app demonstrates the following Lambda best practices:
 4. Apply the principle of least privilege which is accomplished through the use of Policy Templates.
 5. Use env variables to pass operational parameters to your function. This is accomplished through
     the use of AWS Parameter Store. 
-
-This sample app is featured in the article 
-[Best Practices for Running Serverless Code in AWS Lambda - Part 1](https://www.scalabletech.com/blog/best-practices-for-running-serverless-code-in-aws-lambda-part-1/). 
-This sample app was also demoed in a [Meetup event](https://www.meetup.com/South-Florida-AWS-User-Group/events/271338920/)
- for the [South Florida AWS User Group](https://www.meetup.com/South-Florida-AWS-User-Group).
  
 ![Architecture Diagram](images/lambda-sqs-dynamodb-sample.png)
 

@@ -8,6 +8,12 @@ This sample app demonstrates the following Lambda best practices:
 
 ![Architecture Diagram](images/lambda-trigger-destinations-sample.png)
 
+This sample app is featured in the article 
+[Best Practices for Running Serverless Code in AWS Lambda - Part 1](https://www.scalabletech.com/blog/best-practices-for-running-serverless-code-in-aws-lambda-part-1/).
+It was also demoed in a 
+[Meetup event](https://www.meetup.com/South-Florida-AWS-User-Group/events/271338920/)
+ for the [South Florida AWS User Group](https://www.meetup.com/South-Florida-AWS-User-Group).
+
 The project source includes function code and supporting resources:
 
 - `src/main` - Java function code
