@@ -9,8 +9,12 @@ This sample app demonstrates the following Lambda best practices:
     needed and includes specific parts of the AWS SDK needed instead of the entire SDK.
 4. Apply the principle of least privilege which is accomplished through the use of Policy Templates.
 5. Use env variables to pass operational parameters to your function. This is accomplished through
-    the use of Parameter Store and KMS. 
+    the use of AWS Parameter Store. 
 
+This sample app is featured in the article 
+[Best Practices for Running Serverless Code in AWS Lambda - Part 1](https://www.scalabletech.com/blog/best-practices-for-running-serverless-code-in-aws-lambda-part-1/). 
+This sample app was also demoed in a [Meetup event](https://www.meetup.com/South-Florida-AWS-User-Group/events/271338920/)
+ for the [South Florida AWS User Group](https://www.meetup.com/South-Florida-AWS-User-Group).
  
 ![Architecture Diagram](images/lambda-sqs-dynamodb-sample.png)
 
@@ -59,7 +63,9 @@ The project source includes function code and supporting resources:
 
 2. Send a message to the SQS queue with multiple items to persist to the database. This will trigger
     the Lambda function which will batch write multiple items to the DynamoDB table and return a 
-    successful response.
+    successful response. Two of the items will have temperature readings that are out of range based
+    on our app configuration settings stored in AWS Parameter Store and so won't be persisted to 
+    DynamoDB.
     ~~~~
     # Run the following command in your terminal
     $ ./send-message-multiple-items.sh
