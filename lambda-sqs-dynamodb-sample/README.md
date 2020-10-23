@@ -13,6 +13,12 @@ This sample app demonstrates the following Lambda best practices:
  
 ![Architecture Diagram](images/lambda-sqs-dynamodb-sample.png)
 
+This sample app is featured in the article 
+[Best Practices for Running Serverless Code in AWS Lambda - Part 2](https://www.scalabletech.com/blog/best-practices-for-running-serverless-code-in-aws-lambda-part-2/).
+It was also demoed in a 
+[Meetup event](https://www.meetup.com/South-Florida-AWS-User-Group/events/273887473/)
+ for the [South Florida AWS User Group](https://www.meetup.com/South-Florida-AWS-User-Group).
+
 The project source includes function code and supporting resources:
 
 - `src/main` - Java function code
